@@ -1,0 +1,65 @@
+[build-system]
+# Pinned: hatchling >=1.28 emits Metadata-Version 2.5, which the twine bundled
+# with the PyPI publish action rejects as an invalid distribution.
+requires = ["hatchling>=1.27,<1.28"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llama-index-tools-wavespeed"
+version = "0.1.0"
+description = "llama-index tools wavespeed integration"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "WaveSpeedAI", email = "support@wavespeed.ai" }]
+maintainers = [{ name = "WaveSpeedAI", email = "support@wavespeed.ai" }]
+requires-python = ">=3.10,<4.0"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "llama-index-core>=0.13.0,<0.16",
+    "wavespeed>=1.0.13",
+]
+
+[project.urls]
+Homepage = "https://wavespeed.ai"
+Repository = "https://github.com/WaveSpeedAI/llama-index-tools-wavespeed"
+Issues = "https://github.com/WaveSpeedAI/llama-index-tools-wavespeed/issues"
+Documentation = "https://github.com/WaveSpeedAI/llama-index-tools-wavespeed#readme"
+
+[dependency-groups]
+test = ["pytest>=8.0.0"]
+lint = ["ruff>=0.9.0"]
+
+[tool.hatch.build.targets.sdist]
+include = ["llama_index/", "tests/"]
+
+[tool.hatch.build.targets.wheel]
+include = ["llama_index/"]
+artifacts = ["llama_index/tools/wavespeed/py.typed"]
+
+# Mirrors the metadata official llama-index tool packages carry. llamahub.ai is
+# generated from the run-llama monorepo, so this block is documentation only.
+[tool.llamahub]
+contains_example = false
+import_path = "llama_index.tools.wavespeed"
+
+[tool.llamahub.class_authors]
+WaveSpeedToolSpec = "WaveSpeedAI"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config"
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "W"]
