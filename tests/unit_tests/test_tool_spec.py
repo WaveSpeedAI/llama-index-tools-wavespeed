@@ -21,12 +21,12 @@ class FakeClient:
         self,
         run_result: dict[str, Any] | None = None,
         run_error: Exception | None = None,
-        get_result: dict[str, Any] | None = None,
+        get_result_payload: dict[str, Any] | None = None,
         get_error: Exception | None = None,
     ) -> None:
         self.run_result = run_result if run_result is not None else {"outputs": []}
         self.run_error = run_error
-        self.get_result_payload = get_result or {}
+        self.get_result_payload = get_result_payload or {}
         self.get_error = get_error
         self.calls: list[dict[str, Any]] = []
         self.get_calls: list[str] = []
@@ -44,7 +44,7 @@ class FakeClient:
             raise self.run_error
         return self.run_result
 
-    def _get_result(self, request_id, timeout=None):
+    def get_result(self, request_id, timeout=None):
         self.get_calls.append(request_id)
         if self.get_error is not None:
             raise self.get_error
@@ -253,7 +253,7 @@ def test_timeout_error_is_surfaced_not_raised() -> None:
 
 def test_get_prediction_returns_outputs_when_completed() -> None:
     spec, client = make_spec(
-        get_result={
+        get_result_payload={
             "data": {"status": "completed", "outputs": [{"url": "https://cdn/v.mp4"}]}
         }
     )
@@ -264,7 +264,7 @@ def test_get_prediction_returns_outputs_when_completed() -> None:
 @pytest.mark.parametrize("status", ["failed", "cancelled", "timeout"])
 def test_get_prediction_surfaces_terminal_failures(status: str) -> None:
     spec, _ = make_spec(
-        get_result={"data": {"status": status, "error": "gpu exploded"}}
+        get_result_payload={"data": {"status": status, "error": "gpu exploded"}}
     )
     out = spec.get_prediction("p-2")
     assert out.startswith("Error:")
@@ -274,20 +274,20 @@ def test_get_prediction_surfaces_terminal_failures(status: str) -> None:
 
 
 def test_get_prediction_terminal_failure_without_error_text() -> None:
-    spec, _ = make_spec(get_result={"data": {"status": "failed"}})
+    spec, _ = make_spec(get_result_payload={"data": {"status": "failed"}})
     assert "Unknown error" in spec.get_prediction("p-3")
 
 
 @pytest.mark.parametrize("status", ["created", "processing"])
 def test_get_prediction_reports_in_flight_status(status: str) -> None:
-    spec, _ = make_spec(get_result={"data": {"status": status}})
+    spec, _ = make_spec(get_result_payload={"data": {"status": status}})
     out = spec.get_prediction("p-4")
     assert not out.startswith("Error:")
     assert status in out
 
 
 def test_get_prediction_handles_completed_with_no_outputs() -> None:
-    spec, _ = make_spec(get_result={"data": {"status": "completed", "outputs": []}})
+    spec, _ = make_spec(get_result_payload={"data": {"status": "completed", "outputs": []}})
     assert "no outputs" in spec.get_prediction("p-5")
 
 
@@ -299,12 +299,9 @@ def test_get_prediction_surfaces_transport_errors() -> None:
     assert "404" in out
 
 
-def test_get_prediction_prefers_a_public_sdk_getter() -> None:
-    """If a future SDK adds a public get_result, use it over the private one."""
-    client = FakeClient(get_result={"data": {"status": "completed", "outputs": ["u"]}})
-    client.get_result = MagicMock(
-        return_value={"data": {"status": "completed", "outputs": ["public"]}}
-    )
+def test_get_prediction_uses_the_public_sdk_getter() -> None:
+    """get_prediction goes through the SDK's public get_result (added in 1.0.14)."""
+    client = FakeClient(get_result_payload={"data": {"status": "completed", "outputs": ["u"]}})
     spec = WaveSpeedToolSpec(client=client)
-    assert spec.get_prediction("p-7") == "public"
-    assert client.get_calls == []
+    assert spec.get_prediction("p-7") == "u"
+    assert client.get_calls == ["p-7"]

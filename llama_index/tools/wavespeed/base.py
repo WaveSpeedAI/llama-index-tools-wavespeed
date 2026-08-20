@@ -223,9 +223,8 @@ class WaveSpeedToolSpec(BaseToolSpec):
                 run, e.g. the value shown as "task_id: ..." in an error message.
 
         """
-        getter = getattr(self.client, "get_result", None) or self.client._get_result
         try:
-            result = getter(prediction_id)
+            result = self.client.get_result(prediction_id)
         except Exception as e:
             return f"Error: could not fetch WaveSpeed prediction {prediction_id!r}: {e}"
 
