@@ -287,7 +287,9 @@ def test_get_prediction_reports_in_flight_status(status: str) -> None:
 
 
 def test_get_prediction_handles_completed_with_no_outputs() -> None:
-    spec, _ = make_spec(get_result_payload={"data": {"status": "completed", "outputs": []}})
+    spec, _ = make_spec(
+        get_result_payload={"data": {"status": "completed", "outputs": []}}
+    )
     assert "no outputs" in spec.get_prediction("p-5")
 
 
@@ -301,7 +303,9 @@ def test_get_prediction_surfaces_transport_errors() -> None:
 
 def test_get_prediction_uses_the_public_sdk_getter() -> None:
     """get_prediction goes through the SDK's public get_result (added in 1.0.14)."""
-    client = FakeClient(get_result_payload={"data": {"status": "completed", "outputs": ["u"]}})
+    client = FakeClient(
+        get_result_payload={"data": {"status": "completed", "outputs": ["u"]}}
+    )
     spec = WaveSpeedToolSpec(client=client)
     assert spec.get_prediction("p-7") == "u"
     assert client.get_calls == ["p-7"]
