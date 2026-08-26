@@ -9,7 +9,7 @@ a long-running job from its prediction id.
 
 It is built on the official [`wavespeed`](https://pypi.org/project/wavespeed/)
 Python SDK, so it inherits the SDK's submission semantics — a submission POST is
-never retried, terminal statuses (`failed` / `cancelled` / `timeout`) are handled
+never retried, terminal statuses (`failed` / `cancelled` / `timeout` / `deleted`) are handled
 explicitly, and every request carries channel attribution.
 
 ## Installation

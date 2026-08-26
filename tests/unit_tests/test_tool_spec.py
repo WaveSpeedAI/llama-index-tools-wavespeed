@@ -261,7 +261,7 @@ def test_get_prediction_returns_outputs_when_completed() -> None:
     assert client.get_calls == ["p-1"]
 
 
-@pytest.mark.parametrize("status", ["failed", "cancelled", "timeout"])
+@pytest.mark.parametrize("status", ["failed", "cancelled", "timeout", "deleted"])
 def test_get_prediction_surfaces_terminal_failures(status: str) -> None:
     spec, _ = make_spec(
         get_result_payload={"data": {"status": status, "error": "gpu exploded"}}

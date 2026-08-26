@@ -216,7 +216,7 @@ class WaveSpeedToolSpec(BaseToolSpec):
         generate_video returned an error containing a task_id, pass that id here
         to check whether the job finished. Returns the output URL(s) one per
         line when complete, or a status line such as "created", "processing",
-        "failed", "cancelled" or "timeout".
+            "failed", "cancelled", "timeout" or "deleted".
 
         Args:
             prediction_id (str): The prediction / task id returned by a previous
@@ -235,7 +235,7 @@ class WaveSpeedToolSpec(BaseToolSpec):
             if not outputs:
                 return f"Prediction {prediction_id} completed but returned no outputs."
             return self._format_outputs(outputs)
-        if status in ("failed", "cancelled", "timeout"):
+        if status in ("failed", "cancelled", "timeout", "deleted"):
             error = data.get("error") or "Unknown error"
             return f"Error: prediction {prediction_id} {status}: {error}"
         return (
