@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llama-index-tools-wavespeed"
-version = "0.1.1"
+version = "0.1.2"
 description = "llama-index tools wavespeed integration"
 readme = "README.md"
 license = { text = "MIT" }
