@@ -24,7 +24,7 @@ export WAVESPEED_API_KEY="your-api-key"   # https://wavespeed.ai
 | Tool | What it does |
 | --- | --- |
 | `generate_image` | Text to image. Default model `bytedance/seedream-v5.0-pro`. Accepts `resolution` and `aspect_ratio`. |
-| `generate_video` | Text to video. Default model `bytedance/seedance-2.5/text-to-video`. Accepts `duration`. |
+| `generate_video` | Text to video. Default model `wavespeed-ai/minimax-h3/text-to-video` (cheap open-weights starting point; use `bytedance/seedance-2.5/text-to-video` for the highest quality). Accepts `duration`. |
 | `run_model` | Runs any model id with an arbitrary input dict — image editing, upscaling, image-to-video, speech, and so on. See <https://wavespeed.ai/models>. |
 | `get_prediction` | Fetches an earlier prediction by id. Video jobs routinely outlive a single tool call; when one times out the error carries a `task_id` the agent can pass here. |
 
@@ -76,7 +76,7 @@ print(tool_spec.run_model("wavespeed-ai/z-image/turbo", {"prompt": "a fox"}))
 WaveSpeedToolSpec(
     api_key=None,  # else WAVESPEED_API_KEY
     image_model="bytedance/seedream-v5.0-pro",
-    video_model="bytedance/seedance-2.5/text-to-video",
+    video_model="wavespeed-ai/minimax-h3/text-to-video",
     timeout=600.0,  # None waits forever
     poll_interval=2.0,
 )

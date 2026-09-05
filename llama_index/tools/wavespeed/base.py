@@ -17,7 +17,7 @@ DEFAULT_TIMEOUT = 600.0
 DEFAULT_IMAGE_MODEL = "bytedance/seedream-v5.0-pro"
 
 #: Default text-to-video model.
-DEFAULT_VIDEO_MODEL = "bytedance/seedance-2.5/text-to-video"
+DEFAULT_VIDEO_MODEL = "wavespeed-ai/minimax-h3/text-to-video"
 
 
 class WaveSpeedToolSpec(BaseToolSpec):
