@@ -309,3 +309,35 @@ def test_get_prediction_uses_the_public_sdk_getter() -> None:
     spec = WaveSpeedToolSpec(client=client)
     assert spec.get_prediction("p-7") == "u"
     assert client.get_calls == ["p-7"]
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        RuntimeError("Failed to submit prediction: HTTP 502: bad gateway"),
+        RuntimeError(
+            "Prediction submission did not return a response. The task may already "
+            "have been created, so the SDK will not retry the POST automatically."
+        ),
+    ],
+)
+def test_ambiguous_submit_failure_tells_agent_not_to_retry_blindly(
+    error: Exception,
+) -> None:
+    spec, _ = make_spec(run_error=error)
+    out = spec.generate_image("x")
+    assert out.startswith("Error:")
+    assert "do not retry blindly" in out
+    assert "check your recent predictions" in out
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Failed to submit prediction: HTTP 401: bad key",
+        "Prediction failed (task_id: abc-123): content policy violation",
+    ],
+)
+def test_definite_failures_get_no_retry_hint(message: str) -> None:
+    spec, _ = make_spec(run_error=RuntimeError(message))
+    assert "retry blindly" not in spec.generate_image("x")

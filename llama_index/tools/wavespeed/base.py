@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from typing import Any
 
 from llama_index.core.tools.tool_spec.base import BaseToolSpec
@@ -18,6 +19,24 @@ DEFAULT_IMAGE_MODEL = "bytedance/seedream-v5.0-pro"
 
 #: Default text-to-video model.
 DEFAULT_VIDEO_MODEL = "wavespeed-ai/minimax-h3/text-to-video"
+
+
+# A submit that ends without a confirmed 2xx (5xx, read timeout, connection
+# reset) may still have created the task; the SDK never re-POSTs, so tell the
+# agent not to do it either.
+_AMBIGUOUS_SUBMIT = re.compile(
+    r"did not return a response|Failed to submit prediction: HTTP 5\d\d"
+)
+_AMBIGUOUS_SUBMIT_HINT = (
+    " The task may already exist: do not retry blindly; check your recent"
+    " predictions first."
+)
+
+
+def _with_submit_hint(message: str) -> str:
+    if _AMBIGUOUS_SUBMIT.search(message):
+        return message + _AMBIGUOUS_SUBMIT_HINT
+    return message
 
 
 class WaveSpeedToolSpec(BaseToolSpec):
@@ -117,7 +136,9 @@ class WaveSpeedToolSpec(BaseToolSpec):
             # The SDK's messages already carry "(task_id: ...)" and the
             # platform's error text; keep them verbatim so a failed paid task
             # stays traceable and the agent can call get_prediction later.
-            return f"Error: WaveSpeed model {model!r} failed: {e}"
+            return (
+                f"Error: WaveSpeed model {model!r} failed: {_with_submit_hint(str(e))}"
+            )
         outputs = result.get("outputs") or []
         if not outputs:
             return f"Error: WaveSpeed model {model!r} returned no outputs."
