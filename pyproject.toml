@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llama-index-tools-wavespeed"
-version = "0.1.2"
+version = "0.1.3"
 description = "llama-index tools wavespeed integration"
 readme = "README.md"
 license = { text = "MIT" }
@@ -26,7 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "llama-index-core>=0.13.0,<0.16",
-    "wavespeed>=2.0.4",
+    "wavespeed>=2.0.5",
 ]
 
 [project.urls]
