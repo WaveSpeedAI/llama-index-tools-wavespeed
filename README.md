@@ -77,14 +77,14 @@ WaveSpeedToolSpec(
     api_key=None,  # else WAVESPEED_API_KEY
     image_model="bytedance/seedream-v5.0-pro",
     video_model="wavespeed-ai/minimax-h3/text-to-video",
-    timeout=600.0,  # None waits forever
+    timeout=None,  # optional cap in seconds; unset = no short cap
     poll_interval=2.0,
 )
 ```
 
-The default 600s timeout is deliberate: an unbounded wait would strand the
-calling agent. When a video job exceeds it, the task keeps running server-side —
-take the `task_id` out of the error and call `get_prediction`.
+There is no short default wait cap, since tasks can run for hours. If you set
+`timeout` and a job exceeds it, the task keeps running server-side — take the
+`task_id` out of the error and call `get_prediction`.
 
 The underlying SDK client is created with `max_retries=0` so a single tool call
 can never turn into a second, separately billed submission.

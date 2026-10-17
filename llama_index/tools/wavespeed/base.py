@@ -10,10 +10,6 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 #: Channel-attribution name sent to the platform as ``X-Client-Name``.
 _CLIENT_NAME = "llama-index"
 
-#: Default wait deadline. ``None`` would block the calling agent forever, so a
-#: finite default is used even though video jobs are slow.
-DEFAULT_TIMEOUT = 600.0
-
 #: Default text-to-image model.
 DEFAULT_IMAGE_MODEL = "bytedance/seedream-v5.0-pro"
 
@@ -73,7 +69,7 @@ class WaveSpeedToolSpec(BaseToolSpec):
         api_key: str | None = None,
         image_model: str = DEFAULT_IMAGE_MODEL,
         video_model: str = DEFAULT_VIDEO_MODEL,
-        timeout: float | None = DEFAULT_TIMEOUT,
+        timeout: float | None = None,
         poll_interval: float = 2.0,
         client: Any | None = None,
     ) -> None:
@@ -84,8 +80,9 @@ class WaveSpeedToolSpec(BaseToolSpec):
                 environment variable.
             image_model: Model id used by ``generate_image``.
             video_model: Model id used by ``generate_video``.
-            timeout: Maximum seconds to wait for a prediction. Pass ``None`` to
-                wait indefinitely; the task keeps running server-side either way.
+            timeout: Optional maximum seconds to wait for a prediction. ``None``
+                (default) uses the SDK default, which imposes no short cap; the
+                task keeps running server-side either way.
             poll_interval: Seconds between result polls.
             client: Preconfigured ``wavespeed.Client`` (mainly for testing).
         """

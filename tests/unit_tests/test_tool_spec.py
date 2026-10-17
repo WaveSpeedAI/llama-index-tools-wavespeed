@@ -9,7 +9,6 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 from llama_index.tools.wavespeed import WaveSpeedToolSpec
 from llama_index.tools.wavespeed.base import (
     DEFAULT_IMAGE_MODEL,
-    DEFAULT_TIMEOUT,
     DEFAULT_VIDEO_MODEL,
 )
 
@@ -141,7 +140,7 @@ def test_generate_image_defaults_and_mapping() -> None:
         "resolution": "2k",
         "aspect_ratio": "16:9",
     }
-    assert call["timeout"] == DEFAULT_TIMEOUT
+    assert call["timeout"] is None
     assert call["poll_interval"] == 2.0
 
 
@@ -241,7 +240,7 @@ def test_run_error_surfaces_prediction_id_and_platform_text() -> None:
 
 def test_timeout_error_is_surfaced_not_raised() -> None:
     spec, _ = make_spec(
-        run_error=TimeoutError("Prediction timed out after 600 seconds (task_id: t-9)")
+        run_error=TimeoutError("Prediction timed out after 120 seconds (task_id: t-9)")
     )
     out = spec.generate_video("x")
     assert out.startswith("Error:")
