@@ -156,6 +156,7 @@ def test_generate_video_defaults_and_mapping() -> None:
 
     assert out == "https://cdn/x.mp4"
     assert client.calls[0]["model"] == DEFAULT_VIDEO_MODEL
+    assert DEFAULT_VIDEO_MODEL == "bytedance/seedance-2.5/text-to-video"
     assert client.calls[0]["input"] == {
         "prompt": "a drone shot over a glacier",
         "duration": 5,

@@ -14,7 +14,7 @@ _CLIENT_NAME = "llama-index"
 DEFAULT_IMAGE_MODEL = "bytedance/seedream-v5.0-pro"
 
 #: Default text-to-video model.
-DEFAULT_VIDEO_MODEL = "wavespeed-ai/minimax-h3/text-to-video"
+DEFAULT_VIDEO_MODEL = "bytedance/seedance-2.5/text-to-video"
 
 
 # A submit that ends without a confirmed 2xx (5xx, read timeout, connection
